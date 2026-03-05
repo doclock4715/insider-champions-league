@@ -1,0 +1,17 @@
+# Genel
+.DS_Store
+
+# Backend (Laravel)
+backend/vendor/
+backend/node_modules/
+backend/.env
+backend/storage/*.key
+backend/public/build
+backend/public/hot
+backend/public/storage
+
+# Frontend (Vue)
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.env.local
