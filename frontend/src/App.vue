@@ -5,9 +5,14 @@
       <LeagueTable :table="data.table" />
       <div class="side">
         <WeeklyFixture
-          v-if="data.fixtures[data.current_week + 1]"
-          :matches="data.fixtures[data.current_week + 1]"
-          :week="data.current_week + 1"
+          v-if="
+            data.fixtures[data.current_week < 6 ? data.current_week + 1 : 6]
+          "
+          :matches="
+            data.fixtures[data.current_week < 6 ? data.current_week + 1 : 6]
+          "
+          :week="data.current_week < 6 ? data.current_week + 1 : 6"
+          @score-updated="(newData) => (data = newData)"
         />
 
         <div v-if="data.current_week >= 4" class="card">

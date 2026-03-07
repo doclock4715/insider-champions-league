@@ -76,4 +76,24 @@ class LeagueController extends Controller
 
         return $this->getStatus();
     }
+
+    public function updateMatch(Request $request, $id)
+    {
+        // Gelen id'ye ait maçı bul
+        $match = Fixture::findOrFail($id);
+
+        // Sadece oynanmış (is_played = true) maçların skorları düzenlenebilir
+        if ($match->is_played) {
+            $match->update([
+                'home_score' => $request->home_score,
+                'away_score' => $request->away_score
+            ]);
+
+            // Not: İstenirse burada MatchEngine'deki updateTeamStats() yeniden çağrılabilir 
+            // ama manuel düzenlemelerde takım formunun bozulmaması için çağırmıyoruz.
+        }
+
+        // Skor değiştiğine göre LeagueService tabloyu yeniden hesaplayacak
+        return $this->getStatus();
+    }
 }
