@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Team;
 use App\Models\Fixture;
-use Illuminate\Support\Facades\Schema; // Bu satırı ekledik
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
 {

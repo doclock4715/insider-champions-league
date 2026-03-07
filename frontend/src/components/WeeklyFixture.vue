@@ -4,13 +4,11 @@
     <div v-for="m in matches" :key="m.id" class="match-row">
       <div class="team home-team">{{ m.home_team.name }}</div>
 
-      <!-- Türkçe yorum: Maç oynanmadıysa sadece 'v' yaz, oynandıysa Input kutularını göster -->
       <div class="score-area" v-if="!m.is_played">
         <span class="vs">v</span>
       </div>
 
       <div class="score-area editable" v-else>
-        <!-- Türkçe yorum: Değerler değiştiğinde (blur veya enter) API'ye istek atacak fonksiyonu çağırıyoruz -->
         <input
           type="number"
           min="0"
@@ -36,19 +34,19 @@
 <script setup>
 import axios from "axios";
 
-// Türkçe yorum: Ana App.vue'ye veri değiştiğini haber vermek için 'emit' kullanıyoruz
+
 const emit = defineEmits(["score-updated"]);
 const props = defineProps(["matches", "week"]);
 
 const updateScore = async (match) => {
   try {
-    // Türkçe yorum: Kullanıcı inputu değiştirdiği an Backend'e yeni skoru yolluyoruz
+    
     const res = await axios.put(`http://localhost/api/matches/${match.id}`, {
       home_score: match.home_score,
       away_score: match.away_score,
     });
 
-    // Türkçe yorum: Backend başarıyla yeni tabloyu hesapladıysa, Ana sayfaya 'Veriyi yenile' diyoruz
+    
     emit("score-updated", res.data);
   } catch (error) {
     console.error("Score update failed:", error);

@@ -17,7 +17,7 @@ class MatchEngineService
         $home = $fixture->homeTeam;
         $away = $fixture->awayTeam;
 
-        // Türkçe yorum: bak burası değişti
+        
         // Get virtual scores without saving to DB
         $scores = $this->simulateVirtualMatch($home, $away);
         $homeScore = $scores[0];
@@ -35,7 +35,7 @@ class MatchEngineService
         $this->updateTeamStats($away, $awayScore > $homeScore, $awayScore, $homeScore, $scores['lambdaAway']);
     }
 
-    // Türkçe yorum: blok eklendi
+    
     /**
      * Simulates a match purely in memory (Returns scores and lambdas).
      * Used heavily by Monte Carlo to avoid DB crashes.
@@ -49,7 +49,7 @@ class MatchEngineService
         $luckHome = 1 + (rand(-5, 5) / 100);
         $luckAway = 1 + (rand(-5, 5) / 100);
 
-        // Türkçe yorum: Artık ok (->) yerine dizi anahtarı ([]) kullanıyoruz.
+        
         $formAdjustmentHome = 1 + ($hStats['form'] * self::FORM_IMPACT);
         $formAdjustmentAway = 1 + ($aStats['form'] * self::FORM_IMPACT);
 
@@ -89,14 +89,14 @@ class MatchEngineService
         $team->form = max(-10, min(10, $newForm)); // Cap form between -10 and +10
 
         // Update attack and defense strengths (Bayesian-like)
-        // Türkçe yorum: bak burası değişti
+        
         // Calculate the update values
         $attackUpdate = self::STAT_UPDATE_RATE * ($goalsFor - $lambdaFor);
-        // Türkçe yorum: Savunma gücü güncelleme mantığını düzelttik. Yüksek gol yeme, savunma değerini (zayıflığını) artırır.
+        
         $defenseUpdate = self::STAT_UPDATE_RATE * ($goalsAgainst - $lambdaFor);
 
         // Apply updates with caps to prevent infinity values
-        // Türkçe yorum: Değerlerin asla 0.5'ten küçük veya 2.0'dan büyük olmamasını sağlıyoruz. Bu, sonsuzluk hatasını engeller.
+        
         $team->attack_strength = max(0.5, min(2.0, $team->attack_strength + $attackUpdate));
         $team->defense_strength = max(0.5, min(2.0, $team->defense_strength + $defenseUpdate));
 

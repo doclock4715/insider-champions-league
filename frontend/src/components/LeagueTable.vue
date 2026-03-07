@@ -3,7 +3,6 @@
     <h3>League Table</h3>
     <table class="table">
       <thead>
-        <!-- Türkçe yorum: Tabloya Form ve Power (Güç) sütunları eklendi -->
         <tr>
           <th>Team</th>
           <th>P</th>
@@ -24,7 +23,6 @@
           <td>{{ t.l }}</td>
           <td>{{ t.gd > 0 ? "+" + t.gd : t.gd }}</td>
           <td class="points">{{ t.pts }}</td>
-          <!-- Türkçe yorum: Form değeri backend'deki $team->form'dan gelir -->
           <td :class="formClass(t.form)">
             {{ t.form > 0 ? "+" + t.form : t.form }}
           </td>
@@ -37,7 +35,7 @@
 <script setup>
 defineProps(["table"]);
 
-// Türkçe yorum: Form durumuna göre renk vermek için küçük bir fonksiyon
+
 const formClass = (form) => {
   if (form > 0) return "text-green";
   if (form < 0) return "text-red";
@@ -46,7 +44,6 @@ const formClass = (form) => {
 </script>
 
 <style scoped>
-/* Türkçe yorum: Tabloyu biraz daha şık gösterelim */
 .table-card {
   overflow-x: auto;
 }

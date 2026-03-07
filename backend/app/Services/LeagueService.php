@@ -7,7 +7,7 @@ use App\Models\Fixture;
 
 class LeagueService
 {
-    // Türkçe yorum: MatchEngineService'i burada da kullanacağız
+    
     protected $matchEngine;
     public function __construct(MatchEngineService $me)
     {
@@ -52,7 +52,7 @@ class LeagueService
     }
 
     public function getPredictions($table)
-    { // Türkçe yorum: bak burası değişti
+    { 
         $unplayedFixtures = Fixture::where('is_played', false)->get();
 
         if ($unplayedFixtures->isEmpty()) {
@@ -65,13 +65,13 @@ class LeagueService
         return $this->runMonteCarloSimulation($table, $unplayedFixtures);
     }
     
-    // Türkçe yorum: blok eklendi
+    
     /**
      * Runs a Monte Carlo simulation for championship predictions.
      */
     private function runMonteCarloSimulation($currentTable, $unplayedFixtures, $simulations = 1000)
     {
-        // Türkçe yorum: bak burası değişti
+        
         // 1. Modeller yerine takımların anlık istatistiklerini KOPYALAYIP bir dizi (array) yapıyoruz.
         // Böylece veritabanıyla olan bağ tamamen kopuyor.
         $basePoints = [];
@@ -97,7 +97,7 @@ class LeagueService
                 $homeId = $fixture->home_team_id;
                 $awayId = $fixture->away_team_id;
 
-                // Türkçe yorum: Artık nesne göndermiyoruz, sadece saf istatistik dizisini (array) gönderiyoruz
+                
                 $scores = $this->matchEngine->simulateVirtualMatch(
                     $teamsStats[$homeId],
                     $teamsStats[$awayId]
