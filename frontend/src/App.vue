@@ -1,9 +1,5 @@
 <template>
   <div class="container">
-    <div class="loading-overlay" v-if="isLoading">
-      <div class="spinner"></div>
-      <p>Processing...</p>
-    </div>
     <h1>Insider Champions League</h1>
 
     <div class="actions top-actions">
@@ -32,7 +28,6 @@
     </div>
 
     <div class="grid">
-      <!-- Sol Taraf: Puan Durumu ve Tahminler -->
       <div class="main-column">
         <LeagueTable :table="data.table" />
 
@@ -55,13 +50,11 @@
         </div>
       </div>
 
-      <!-- Sağ Taraf: Fikstürler (Tüm Haftalar) -->
       <div class="side-column">
-        <h3>Match Results</h3>
-        <div class="fixtures-scroll-area">
-          <!-- Sadece oynanmış haftaları veya sıradaki (current + 1) haftayı göster -->
+        <h3>All Fixtures & Results</h3>
+        <div class="fixtures-grid">
           <WeeklyFixture
-            v-for="item in reversedFixtures"
+            v-for="item in allFixtures"
             :key="item.week"
             :matches="item.matches"
             :week="item.week"
@@ -82,46 +75,41 @@ import WeeklyFixture from "./components/WeeklyFixture.vue";
 const data = ref({ table: [], fixtures: {}, current_week: 0, predictions: [] });
 const isLoading = ref(false);
 
-// Fikstürleri tersten sıralamak için Computed Property oluşturuyoruz
-const reversedFixtures = computed(() => {
+const allFixtures = computed(() => {
   if (!data.value.fixtures) return [];
 
-  // Obje anahtarlarını alıp (1, 2, 3...) tersten sırala (6, 5, 4...)
-  const weeks = Object.keys(data.value.fixtures).sort((a, b) => b - a);
+  // Anahtarları (1, 2, 3...) bul ve küçükten büyüğe sırala
+  const weeks = Object.keys(data.value.fixtures).sort((a, b) => a - b);
 
   const sortedArr = [];
   weeks.forEach((weekStr) => {
-    // Sadece oynanmış olanları veya sıradaki (current + 1) haftayı göster
-    if (parseInt(weekStr) <= data.value.current_week + 1) {
-      sortedArr.push({ week: weekStr, matches: data.value.fixtures[weekStr] });
-    }
+    sortedArr.push({ week: weekStr, matches: data.value.fixtures[weekStr] });
   });
+
   return sortedArr;
 });
 
-// Tüm API isteklerini sarmalayarak 'Loading' durumunu otomatik yöneten yardımcı fonksiyon
 const withLoading = async (apiCall) => {
-  isLoading.value = true; // Sadece spam tıklamayı önlemek için bayrağı kaldır
+  isLoading.value = true;
   try {
     const res = await apiCall();
     data.value = res.data;
   } catch (error) {
     console.error("API Error:", error);
   } finally {
-    isLoading.value = false; // İşlem biter bitmez anında bayrağı indir
+    isLoading.value = false;
   }
 };
 
-const load = () => withLoading(() => axios.get("http://localhost/api/status"));
-const playNext = () =>
-  withLoading(() => axios.post("http://localhost/api/play-week"));
-const playAll = () =>
-  withLoading(() => axios.post("http://localhost/api/play-all"));
-const reset = () => withLoading(() => axios.post("http://localhost/api/reset"));
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Manuel skor düzenleme işleminden gelen veriyi yakalama
+const load = () => withLoading(() => axios.get(`${API_URL}/status`));
+const playNext = () => withLoading(() => axios.post(`${API_URL}/play-week`));
+const playAll = () => withLoading(() => axios.post(`${API_URL}/play-all`));
+const reset = () => withLoading(() => axios.post(`${API_URL}/reset`));
+
 const handleScoreUpdated = (newData) => {
-  data.value = newData;
+  data.value = { ...newData, table: [...newData.table] };
 };
 
 onMounted(load);
@@ -233,20 +221,20 @@ h3 {
   font-weight: bold;
 }
 
-/* Fikstür alanı çok uzarsa scroll çıksın */
-.fixtures-scroll-area {
-  max-height: 800px;
-  overflow-y: auto;
-  padding-right: 10px;
+.fixtures-grid {
+  display: grid;
+  /* 2 eşit sütun oluşturur. Ekran daralırsa (örn: mobil) tek sütuna düşer. */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px; /* Kartlar arası boşluk */
 }
-.fixtures-scroll-area::-webkit-scrollbar {
-  width: 8px;
+
+/* Ana Grid Layout'unu biraz daha genişletelim ki 2 sütun fikstür sığsın */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
 }
-.fixtures-scroll-area::-webkit-scrollbar-thumb {
-  background: #bdc3c7;
-  border-radius: 4px;
-}
-/* Türkçe yorum: blok eklendi (Zarif Buton İçi Spinner) */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -273,4 +261,3 @@ h3 {
   }
 }
 </style>
-

@@ -125,7 +125,6 @@ const getFormDotClass = (result) => {
   background-color: #95a5a6;
 } /* Gri */
 
-/* Türkçe yorum: Vue Transition CSS sınıfları (Sıralama Animasyonu) */
 .list-move,
 .list-enter-active,
 .list-leave-active {
