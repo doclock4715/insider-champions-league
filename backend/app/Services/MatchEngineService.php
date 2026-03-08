@@ -85,8 +85,18 @@ class MatchEngineService
     private function updateTeamStats(Team $team, bool $isWinner, int $goalsFor, int $goalsAgainst, float $lambdaFor): void
     {
         // Update form
-        $newForm = $team->form + ($isWinner ? 2 : -2);
-        $team->form = max(-10, min(10, $newForm)); // Cap form between -10 and +10
+        // Eğer maç berabere bittiyse (goalsFor == goalsAgainst), form değişmez (0 eklenir).
+        // Kazandıysa +2, kaybettiyse -2 eklenir.
+        if ($goalsFor > $goalsAgainst) {
+            $formChange = 2;
+        } elseif ($goalsFor < $goalsAgainst) {
+            $formChange = -2;
+        } else {
+            $formChange = 0; // Beraberlik
+        }
+
+        $newForm = $team->form + $formChange;
+        $team->form = max(-10, min(10, $newForm));
 
         // Update attack and defense strengths (Bayesian-like)
         

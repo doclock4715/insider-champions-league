@@ -89,7 +89,7 @@ class LeagueController extends Controller
                 'away_score' => $request->away_score
             ]);
 
-            // Not: İstenirse burada MatchEngine'deki updateTeamStats() yeniden çağrılabilir 
+            // Not: TODO İstenirse burada MatchEngine'deki updateTeamStats() yeniden çağrılabilir 
             // ama manuel düzenlemelerde takım formunun bozulmaması için çağırmıyoruz.
         }
 

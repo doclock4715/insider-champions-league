@@ -5,18 +5,18 @@
       <thead>
         <tr>
           <th>Team</th>
-          <th>P</th>
-          <th>W</th>
-          <th>D</th>
-          <th>L</th>
+          <th title="Played">P</th>
+          <th title="Won">W</th>
+          <th title="Drawn">D</th>
+          <th title="Lost">L</th>
           <th title="Goals For (Atılan)">GF</th>
           <th title="Goals Against (Yenilen)">GA</th>
           <th title="Goal Difference (Averaj)">GD</th>
-          <th>Pts</th>
-          <th title="Güncel Form Durumu (-10 ile +10 arası)">Form</th>
+          <th title="Points">Pts</th>
+          <th title="Son 5 Maçın Formu">Form</th>
         </tr>
       </thead>
-      <tbody>
+      <TransitionGroup name="list" tag="tbody">
         <tr v-for="t in table" :key="t.id">
           <td class="team-name">{{ t.name }}</td>
           <td>{{ t.p }}</td>
@@ -27,11 +27,25 @@
           <td>{{ t.ga }}</td>
           <td>{{ t.gd > 0 ? "+" + t.gd : t.gd }}</td>
           <td class="points">{{ t.pts }}</td>
-          <td :class="formClass(t.form)">
-            {{ t.form > 0 ? "+" + t.form : t.form }}
+
+          <td class="form-cell">
+            <div class="form-container">
+              <!-- Hiç maç oynanmadıysa boş kalır. Oynandıysa W/D/L basılır. -->
+              <span
+                v-for="(result, index) in t.recent_form"
+                :key="index"
+                class="form-dot"
+                :class="getFormDotClass(result)"
+                :title="
+                  result === 'W' ? 'Win' : result === 'L' ? 'Loss' : 'Draw'
+                "
+              >
+                {{ result }}
+              </span>
+            </div>
           </td>
         </tr>
-      </tbody>
+      </TransitionGroup>
     </table>
   </div>
 </template>
@@ -39,10 +53,10 @@
 <script setup>
 defineProps(["table"]);
 
-const formClass = (form) => {
-  if (form > 0) return "text-green";
-  if (form < 0) return "text-red";
-  return "text-gray";
+const getFormDotClass = (result) => {
+  if (result === "W") return "dot-win";
+  if (result === "L") return "dot-loss";
+  return "dot-draw";
 };
 </script>
 
@@ -75,15 +89,54 @@ const formClass = (form) => {
   font-size: 1.1em;
   color: #2c3e50;
 }
-.text-green {
-  color: #27ae60;
-  font-weight: bold;
+
+.form-cell {
+  min-width: 120px;
 }
-.text-red {
-  color: #c0392b;
-  font-weight: bold;
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px; /* Noktalar arası boşluk */
+  height: 100%;
 }
-.text-gray {
-  color: #7f8c8d;
+.form-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%; /* Tam yuvarlak yapar */
+  font-size: 0.75em;
+  font-weight: bold;
+  color: white;
+  user-select: none; /* Mouse ile metin seçilmesin */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Hafif gölge */
+}
+
+/* Premier Lig tarzı renkler */
+.dot-win {
+  background-color: #2ecc71;
+} /* Yeşil */
+.dot-loss {
+  background-color: #e74c3c;
+} /* Kırmızı */
+.dot-draw {
+  background-color: #95a5a6;
+} /* Gri */
+
+/* Türkçe yorum: Vue Transition CSS sınıfları (Sıralama Animasyonu) */
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.list-leave-active {
+  position: absolute;
 }
 </style>

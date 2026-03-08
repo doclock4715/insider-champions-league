@@ -37,6 +37,22 @@ class LeagueService
                     $l++;
                 }
             }
+            $recentForm = [];
+            $last5Matches = $matches->sortBy('week')->take(-5); // Son 5 maç
+
+            foreach ($last5Matches as $m) {
+                $isHome = $m->home_team_id == $team->id;
+                $myScore = $isHome ? $m->home_score : $m->away_score;
+                $oppScore = $isHome ? $m->away_score : $m->home_score;
+
+                if ($myScore > $oppScore) {
+                    $recentForm[] = 'W'; // Galibiyet (Win)
+                } elseif ($myScore < $oppScore) {
+                    $recentForm[] = 'L'; // Mağlubiyet (Lose)
+                } else {
+                    $recentForm[] = 'D'; // Beraberlik (Draw)
+                }
+            }
             return [
                 'id' => $team->id,
                 'name' => $team->name,
@@ -48,7 +64,8 @@ class LeagueService
                 'ga' => $gc,
                 'gd' => $gs - $gc,
                 'pts' => ($w * 3) + $d,
-                'form' => $team->form
+                'form' => $team->form,
+                'recent_form' => $recentForm
             ];
         })->toArray();
 
