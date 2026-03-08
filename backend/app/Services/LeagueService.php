@@ -47,15 +47,23 @@ class LeagueService
                 'gf' => $gs,
                 'ga' => $gc,
                 'gd' => $gs - $gc,
-                'pts' => ($w * 3) + $d
+                'pts' => ($w * 3) + $d,
+                'form' => $team->form
             ];
+        })->toArray();
+
+        // 1. Puan (Azalan), 2. Averaj (Azalan), 3. Atılan Gol (Azalan)
+        usort($teams, function ($a, $b) {
+            if ($a['pts'] !== $b['pts']) {
+                return $b['pts'] <=> $a['pts'];
+            }
+            if ($a['gd'] !== $b['gd']) {
+                return $b['gd'] <=> $a['gd'];
+            }
+            return $b['gf'] <=> $a['gf'];
         });
 
-        // Puanlar eşitse Averaja (gd), o da eşitse Atılan Gole (gf) göre sırala
-        return $teams->sortByDesc('pts')
-            ->sortByDesc('gd')
-            ->sortByDesc('gf')
-            ->values();
+        return collect($teams);
     }
 
     public function getPredictions($table)
