@@ -88,7 +88,6 @@ Backend testlerini çalıştırmak için `backend` klasöründeyken şu komutu g
 docker compose exec laravel.test php artisan test
 ```
 
-##  acknowledgements
 ## 🧠 Kaynaklar ve İlham
 
 Bu projenin geliştirilmesi sırasında, konsept oluşturma, algoritma tasarımı ve kodlama süreçlerinde aşağıdaki yapay zeka araçlarından ve kaynaklardan aktif olarak yararlanılmıştır:
