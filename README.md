@@ -97,5 +97,6 @@ Bu projenin geliştirilmesi sırasında, konsept oluşturma, algoritma tasarım�
 -   **Google NotebookLM:** Proje dokümantasyonunu, teknik gereksinimleri ve geliştirme notlarını organize etmek, özetlemek ve slayt metinleri hazırlamak için kullanılmıştır.
     -   [Geliştirme Notları 1](https://notebooklm.google.com/notebook/a7c3f2d8-b3a4-4941-a4b1-0d5640ae479c)
     -   [Geliştirme Notları 2](https://notebooklm.google.com/notebook/93931642-ca84-4adb-8137-1fa935679145)
+    -   [Proje Slaytı](https://notebooklm.google.com/notebook/e1744ffa-545b-425f-afe7-bc520bf43eaa?artifactId=eeeb6322-1d7b-4f89-a7d1-373de1f2836c)
 
 Bu araçlar, projenin daha hızlı ve daha yüksek kalitede tamamlanmasında önemli bir rol oynamıştır.
