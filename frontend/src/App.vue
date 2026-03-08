@@ -1,23 +1,34 @@
 <template>
   <div class="container">
+    <div class="loading-overlay" v-if="isLoading">
+      <div class="spinner"></div>
+      <p>Processing...</p>
+    </div>
     <h1>Insider Champions League</h1>
 
     <div class="actions top-actions">
       <button
         class="btn primary"
         @click="playNext"
-        :disabled="data.current_week >= 6"
+        :disabled="isLoading || data.current_week >= 6"
       >
-        Play Next Week
+        <span v-if="isLoading" class="btn-spinner"></span>
+        <span v-else>Play Next Week</span>
       </button>
+
       <button
         class="btn success"
         @click="playAll"
-        :disabled="data.current_week >= 6"
+        :disabled="isLoading || data.current_week >= 6"
       >
-        Play All
+        <span v-if="isLoading" class="btn-spinner"></span>
+        <span v-else>Play All</span>
       </button>
-      <button class="btn danger" @click="reset">Reset League</button>
+
+      <button class="btn danger" @click="reset" :disabled="isLoading">
+        <span v-if="isLoading" class="btn-spinner"></span>
+        <span v-else>Reset League</span>
+      </button>
     </div>
 
     <div class="grid">
@@ -48,15 +59,14 @@
       <div class="side-column">
         <h3>Match Results</h3>
         <div class="fixtures-scroll-area">
-          <template v-for="(matches, weekStr) in data.fixtures" :key="weekStr">
-            <!-- Sadece oynanmış haftaları veya sıradaki (current + 1) haftayı göster -->
-            <WeeklyFixture
-              v-if="parseInt(weekStr) <= data.current_week + 1"
-              :matches="matches"
-              :week="weekStr"
-              @score-updated="(newData) => (data = newData)"
-            />
-          </template>
+          <!-- Sadece oynanmış haftaları veya sıradaki (current + 1) haftayı göster -->
+          <WeeklyFixture
+            v-for="item in reversedFixtures"
+            :key="item.week"
+            :matches="item.matches"
+            :week="item.week"
+            @score-updated="handleScoreUpdated"
+          />
         </div>
       </div>
     </div>
@@ -64,38 +74,60 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import LeagueTable from "./components/LeagueTable.vue";
 import WeeklyFixture from "./components/WeeklyFixture.vue";
 
 const data = ref({ table: [], fixtures: {}, current_week: 0, predictions: [] });
+const isLoading = ref(false);
 
-const load = async () => {
-  const res = await axios.get("http://localhost/api/status");
-  data.value = res.data;
+// Fikstürleri tersten sıralamak için Computed Property oluşturuyoruz
+const reversedFixtures = computed(() => {
+  if (!data.value.fixtures) return [];
+
+  // Obje anahtarlarını alıp (1, 2, 3...) tersten sırala (6, 5, 4...)
+  const weeks = Object.keys(data.value.fixtures).sort((a, b) => b - a);
+
+  const sortedArr = [];
+  weeks.forEach((weekStr) => {
+    // Sadece oynanmış olanları veya sıradaki (current + 1) haftayı göster
+    if (parseInt(weekStr) <= data.value.current_week + 1) {
+      sortedArr.push({ week: weekStr, matches: data.value.fixtures[weekStr] });
+    }
+  });
+  return sortedArr;
+});
+
+// Tüm API isteklerini sarmalayarak 'Loading' durumunu otomatik yöneten yardımcı fonksiyon
+const withLoading = async (apiCall) => {
+  isLoading.value = true; // Sadece spam tıklamayı önlemek için bayrağı kaldır
+  try {
+    const res = await apiCall();
+    data.value = res.data;
+  } catch (error) {
+    console.error("API Error:", error);
+  } finally {
+    isLoading.value = false; // İşlem biter bitmez anında bayrağı indir
+  }
 };
 
-const playNext = async () => {
-  const res = await axios.post("http://localhost/api/play-week");
-  data.value = res.data;
-};
+const load = () => withLoading(() => axios.get("http://localhost/api/status"));
+const playNext = () =>
+  withLoading(() => axios.post("http://localhost/api/play-week"));
+const playAll = () =>
+  withLoading(() => axios.post("http://localhost/api/play-all"));
+const reset = () => withLoading(() => axios.post("http://localhost/api/reset"));
 
-const playAll = async () => {
-  const res = await axios.post("http://localhost/api/play-all");
-  data.value = res.data;
-};
-
-const reset = async () => {
-  const res = await axios.post("http://localhost/api/reset");
-  data.value = res.data;
+// Manuel skor düzenleme işleminden gelen veriyi yakalama
+const handleScoreUpdated = (newData) => {
+  data.value = newData;
 };
 
 onMounted(load);
 </script>
 
 <style>
-/* Türkçe yorum: Arayüzü çok daha profesyonel göstermek için CSS güncellemeleri */
 body {
   background-color: #f4f7f6;
   color: #333;
@@ -214,5 +246,31 @@ h3 {
   background: #bdc3c7;
   border-radius: 4px;
 }
+/* Türkçe yorum: blok eklendi (Zarif Buton İçi Spinner) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px; /* Buton genişliği değişip durmasın diye sabit min-width verdik */
+}
+
+.btn-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite; /* Animasyon hızını artırdık (0.6s) */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 </style>
->
+
