@@ -87,3 +87,16 @@ Backend testlerini çalıştırmak için `backend` klasöründeyken şu komutu g
 ```bash
 docker compose exec laravel.test php artisan test
 ```
+
+##  acknowledgements
+## 🧠 Kaynaklar ve İlham
+
+Bu projenin geliştirilmesi sırasında, konsept oluşturma, algoritma tasarımı ve kodlama süreçlerinde aşağıdaki yapay zeka araçlarından ve kaynaklardan aktif olarak yararlanılmıştır:
+
+-   **OpenAI ChatGPT:** Kodlama ve algoritma mantığı üzerine beyin fırtınası, "boilerplate" kod üretimi ve hata ayıklama (debugging) için kullanılmıştır.
+-   **Google Gemini:** Proje mimarisi, en iyi pratikler (best practices) ve alternatif algoritma yaklaşımları konusunda danışmanlık sağlamıştır.
+-   **Google NotebookLM:** Proje dokümantasyonunu, teknik gereksinimleri ve geliştirme notlarını organize etmek, özetlemek ve slayt metinleri hazırlamak için kullanılmıştır.
+    -   [Geliştirme Notları 1](https://notebooklm.google.com/notebook/a7c3f2d8-b3a4-4941-a4b1-0d5640ae479c)
+    -   [Geliştirme Notları 2](https://notebooklm.google.com/notebook/93931642-ca84-4adb-8137-1fa935679145)
+
+Bu araçlar, projenin daha hızlı ve daha yüksek kalitede tamamlanmasında önemli bir rol oynamıştır.
