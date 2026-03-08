@@ -7,7 +7,7 @@ use App\Models\Fixture;
 
 class LeagueService
 {
-    
+
     protected $matchEngine;
     public function __construct(MatchEngineService $me)
     {
@@ -44,15 +44,22 @@ class LeagueService
                 'w' => $w,
                 'd' => $d,
                 'l' => $l,
+                'gf' => $gs,
+                'ga' => $gc,
                 'gd' => $gs - $gc,
                 'pts' => ($w * 3) + $d
             ];
         });
-        return $teams->sortByDesc('pts')->values();
+
+        // Puanlar eşitse Averaja (gd), o da eşitse Atılan Gole (gf) göre sırala
+        return $teams->sortByDesc('pts')
+            ->sortByDesc('gd')
+            ->sortByDesc('gf')
+            ->values();
     }
 
     public function getPredictions($table)
-    { 
+    {
         $unplayedFixtures = Fixture::where('is_played', false)->get();
 
         if ($unplayedFixtures->isEmpty()) {
@@ -64,14 +71,14 @@ class LeagueService
 
         return $this->runMonteCarloSimulation($table, $unplayedFixtures);
     }
-    
-    
+
+
     /**
      * Runs a Monte Carlo simulation for championship predictions.
      */
     private function runMonteCarloSimulation($currentTable, $unplayedFixtures, $simulations = 1000)
     {
-        
+
         // 1. Modeller yerine takımların anlık istatistiklerini KOPYALAYIP bir dizi (array) yapıyoruz.
         // Böylece veritabanıyla olan bağ tamamen kopuyor.
         $basePoints = [];
@@ -97,7 +104,7 @@ class LeagueService
                 $homeId = $fixture->home_team_id;
                 $awayId = $fixture->away_team_id;
 
-                
+
                 $scores = $this->matchEngine->simulateVirtualMatch(
                     $teamsStats[$homeId],
                     $teamsStats[$awayId]

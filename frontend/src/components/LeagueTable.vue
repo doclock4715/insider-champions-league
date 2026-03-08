@@ -9,7 +9,9 @@
           <th>W</th>
           <th>D</th>
           <th>L</th>
-          <th>GD</th>
+          <th title="Goals For (Atılan)">GF</th>
+          <th title="Goals Against (Yenilen)">GA</th>
+          <th title="Goal Difference (Averaj)">GD</th>
           <th>Pts</th>
           <th title="Güncel Form Durumu (-10 ile +10 arası)">Form</th>
         </tr>
@@ -21,6 +23,8 @@
           <td>{{ t.w }}</td>
           <td>{{ t.d }}</td>
           <td>{{ t.l }}</td>
+          <td>{{ t.gf }}</td>
+          <td>{{ t.ga }}</td>
           <td>{{ t.gd > 0 ? "+" + t.gd : t.gd }}</td>
           <td class="points">{{ t.pts }}</td>
           <td :class="formClass(t.form)">
@@ -34,7 +38,6 @@
 
 <script setup>
 defineProps(["table"]);
-
 
 const formClass = (form) => {
   if (form > 0) return "text-green";
