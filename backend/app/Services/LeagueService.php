@@ -77,7 +77,26 @@ class LeagueService
             });
         }
 
-        return $this->runMonteCarloSimulation($table, $unplayedFixtures);
+        // 1. Matematiksel olarak şampiyonluk şansı kalmayanları ele (Elimination)
+        $maxPointsAvailable = ($unplayedFixtures->count() / 2) * 3; // Kalan hafta sayısı * 3 puan
+        $currentLeaderPoints = $table->max('pts');
+
+        $table = $table->map(function ($team) use ($maxPointsAvailable, $currentLeaderPoints) {
+            $team['can_win'] = ($team['pts'] + $maxPointsAvailable) >= $currentLeaderPoints;
+            return $team;
+        });
+
+        // 2. Simülasyonu çalıştır (Artık 5000 iterasyon yapıyoruz ki çok düşük ihtimalleri de yakalasın)
+        $predictions = $this->runMonteCarloSimulation($table, $unplayedFixtures, 5000);
+
+        // 3. Matematiksel olarak şansı olan ama simülasyonda 0 çeken takımlara en az %1 şans ver (Görsel Düzeltme)
+        return array_map(function ($p) use ($table) {
+            $teamInfo = $table->firstWhere('name', $p['team_name']);
+            if ($teamInfo['can_win'] && $p['percentage'] == 0) {
+                $p['percentage'] = 1; // "Matematiksel olarak şansı var ama çok düşük (< %0.1)" anlamına gelir.
+            }
+            return $p;
+        }, $predictions);
     }
 
 
