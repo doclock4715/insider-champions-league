@@ -1,4 +1,4 @@
-# ⚽ Insider One Champions League Simulation
+# ⚽ Champions League Simulation
 
 <img width="1645" height="1262" alt="image" src="https://github.com/user-attachments/assets/c00e6734-509c-4aca-a1ac-54fcb13b3da5" />
 
