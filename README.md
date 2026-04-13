@@ -1,6 +1,184 @@
-# Insider One Champions League Simulation
+# ⚽ Insider One Champions League Simulation
 
 <img width="1645" height="1262" alt="image" src="https://github.com/user-attachments/assets/c00e6734-509c-4aca-a1ac-54fcb13b3da5" />
+
+This project is a full-featured simulation of a Champions League group stage consisting of four football teams. It is built using a modern **decoupled architecture**, including both Backend (Laravel) and Frontend (Vue.js) layers.
+
+---
+
+## ✨ Key Features
+
+### ⚙️ Dynamic Match Engine
+
+Match results are not generated using a simple `rand()` function. Instead, they are calculated using:
+
+* Team attack/defense strengths
+* Home advantage
+* Current form
+* Statistical **Poisson Distribution**
+
+---
+
+### 🧠 Bayesian Learning Model
+
+After each match, teams dynamically improve or weaken based on their performance relative to expectations.
+
+---
+
+### 🔮 Monte Carlo Prediction System
+
+Starting from week 4, remaining matches are simulated **5000 times** to calculate each team's championship probability.
+
+---
+
+### 🎮 Fully Interactive Interface
+
+* Play matches week by week or simulate all matches ("Play All")
+* Manually edit match results with instant table updates
+* Reset the league to its initial state ("Reset")
+
+---
+
+### 🎨 Professional UI/UX
+
+* Last 5 matches form indicators (W-D-L)
+* Animated progress bars for probabilities
+* In-button loading animations for API calls
+
+---
+
+## 🏗️ Architecture Highlights
+
+### 🔑 Single Source of Truth
+
+The league table is **not stored in the database**. It is recalculated from match results each time, ensuring data consistency.
+
+---
+
+### 🧩 Component-Based Design
+
+Frontend is structured into reusable components:
+
+* `LeagueTable`
+* `WeeklyFixture`
+
+---
+
+### 🧱 OOP & Service Layer
+
+All business logic is separated from controllers:
+
+* `LeagueService`
+* `MatchEngineService`
+
+---
+
+### 🧪 Unit Testing
+
+Includes automated tests for:
+
+* Fixture generation
+* Standings calculation
+* Prediction accuracy
+
+---
+
+## 🛠️ Tech Stack
+
+* **Backend:** Laravel (PHP)
+* **Frontend:** Vue.js
+* **Database:** MySQL
+* **Environment:** Docker
+* **Testing:** PHPUnit
+
+---
+
+## 🚀 Getting Started
+
+This project uses Docker, so no need to install PHP, Composer, or Node.js locally.
+
+### 📌 Prerequisites
+
+* Docker Desktop installed and running
+
+---
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/doclock4715/insider-champions-league.git
+cd insider-champions-league
+```
+
+---
+
+### 2️⃣ Start Backend (Laravel API)
+
+```bash
+cd backend
+cp .env.example .env
+
+docker compose up -d
+
+docker compose exec laravel.test composer install
+docker compose exec laravel.test php artisan key:generate
+docker compose exec laravel.test php artisan migrate:fresh --seed
+```
+
+📍 Backend runs at:
+
+```
+http://localhost/api
+```
+
+---
+
+### 3️⃣ Start Frontend (Vue.js)
+
+```bash
+cd frontend
+
+docker run --rm -v ${PWD}:/app -w /app node:20-alpine npm install
+
+docker run -it --rm -v ${PWD}:/app -w /app -p 5180:5180 node:20-alpine npm run dev
+```
+
+📍 Frontend runs at:
+
+```
+http://localhost:5180
+```
+
+---
+
+## 🧪 Run Tests
+
+```bash
+docker compose exec laravel.test php artisan test
+```
+
+---
+
+## 🧠 Inspirations & Resources
+
+This project was developed with support from modern AI tools:
+
+* ChatGPT → brainstorming, algorithm design, debugging
+* Google Gemini → architecture & best practices
+* Google NotebookLM → documentation & organization
+
+---
+
+## 📌 Notes
+
+This project was originally developed as part of a job application and is now included in my portfolio to showcase:
+
+* Backend architecture skills
+* Simulation & algorithm design
+* Full-stack development capabilities
+
+  ---
+  ## 🇹🇷 Türkçe Versiyon
 
 Bu proje, dört futbol takımından oluşan bir Şampiyonlar Ligi grup aşamasının tam kapsamlı bir simülasyonudur. Proje, hem Backend (Laravel) hem de Frontend (Vue.js) katmanlarını içeren, modern bir "Decoupled" (Ayrık) mimariyle geliştirilmiştir.
 
